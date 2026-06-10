@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Jurado - Evaluación</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+    body { background-color: #ffffff; padding-top: 60px; padding-bottom: 20px; color: #000000; }
+    
+    
+    .app-bar { position: fixed; top: 0; left: 0; right: 0; height: 56px; background-color: #000000; color: #ffffff; display: flex; align-items: center; padding: 0 16px; z-index: 1000; border-bottom: 2px solid #000000; }
+    .app-bar h1 { font-size: 1.1rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    .container { width: 100%; max-width: 480px; margin: 0 auto; padding: 16px; }
+    .card-info { font-size: 0.85rem; color: #000000; border: 1px solid #000000; padding: 12px; margin-bottom: 16px; text-align: center; }
+    
+    /* Buscador compacto */
+    .search-box { display: flex; gap: 8px; margin-bottom: 20px; }
+    .search-box .form-control-search { flex: 1; height: 40px; padding: 10px; border: 1px solid #000000; font-size: 1rem; }
+    .btn-search { padding: 0 20px; background-color: #000000; color: #ffffff; border: 1px solid #000000; font-weight: bold; text-transform: uppercase; cursor: pointer; }
+    .btn-search:active { background-color: #ffffff; color: #000000; }
+
+    /* Contenedor tipo Formato enmarcado */
+    .formato-block { border: 1px solid #000000; margin-bottom: 24px; padding: 12px; background-color: #ffffff; }
+    
+    /* Títulos de sección con fondo negro e inverso como RRHH */
+    .formato-header { background-color: #000000; color: #ffffff; padding: 8px 10px; font-size: 0.85rem; font-weight: bold; text-transform: uppercase; margin: -12px -12px 16px -12px; letter-spacing: 0.5px; }
+    
+    /* --- OPTIMIZACIÓN FLEXBOX: Filas horizontales compactas para las notas de exámenes --- */
+    .form-group-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed #cccccc; }
+    .form-group-row:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+    .form-group-row label { flex: 1; font-size: 0.85rem; font-weight: bold; color: #000000; line-height: 1.3; }
+    
+    /* Cuadros pequeños y fijos para puntajes de exámenes y matriz */
+    .form-control-small { width: 65px; height: 36px; padding: 4px; border: 1px solid #000000; font-size: 0.95rem; text-align: center; background-color: #ffffff; color: #000000; flex-shrink: 0; }
+    .form-control-small:focus { outline: 2px solid #000000; }
+    
+    /* Tabla de matriz responsiva en blanco y negro puro */
+    .table-mobile-wrapper { width: 100%; overflow-x: auto; background: #ffffff; border: 1px solid #000000; }
+    table { width: 100%; border-collapse: collapse; min-width: 400px; font-size: 0.85rem; }
+    th, td { padding: 10px; border-bottom: 1px solid #000000; border-right: 1px solid #000000; text-align: center; color: #000000; }
+    
+    /* Cabecera tradicional con fondo blanco y letras negras */
+    th { background-color: #ffffff; color: #000000; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
+    
+    .text-left { text-align: left; min-width: 180px; font-weight: bold; }
+    
+    /* Casillas internas de la matriz */
+    .matrix-input { width: 50px; height: 32px; text-align: center; border: 1px solid #000000; font-size: 0.95rem; background: #ffffff; color: #000000; }
+    
+    /* Botón de envío final */
+    .btn-submit { width: 100%; height: 50px; background-color: #000000; color: #ffffff; border: 2px solid #000000; font-size: 1rem; font-weight: bold; text-transform: uppercase; cursor: pointer; letter-spacing: 1px; margin-top: 10px; }
+    .btn-submit:active { background-color: #ffffff; color: #000000; }
+  </style>
+</head>
+<body>
+
+  <header class="app-bar">
+    <h1>⚖️ Jurado Evaluador: Carga de Notas</h1>
+  </header>
+
+  <main class="container" id="evaluacionJurado">
+    <div class="card-info">
+      Localice al aspirante por su cédula para habilitar la carga de exámenes y exposición.
+    </div>
+    
+    <div class="search-box">
+      <input type="number" id="evaluacion_inCedula" class="form-control-search" placeholder="Cédula del aspirante..." inputmode="numeric">
+      <button id="evaluacion_btBuscar" class="btn-search">Buscar</button>
+    </div>
+    
+    <div id="evaluacion_divFormularioNotas" hidden>
+      
+      <div class="formato-block">
+        <div class="formato-header">CO-8: CONOCIMIENTOS (0-20)</div>
+        <div class="form-group-row">
+          <label for="evaluacion_inExamenEscrito">Nota Examen Escrito (0 a 20 pts):</label>
+          <input type="number" id="evaluacion_inExamenEscrito" class="form-control-small" placeholder="0.00" min="0" max="20" step="0.01" inputmode="decimal">
+        </div>
+        <div class="form-group-row">
+          <label for="evaluacion_inExamenPractico">Nota Examen Oral / Práctico (0 a 20 pts):</label>
+          <input type="number" id="evaluacion_inExamenPractico" class="form-control-small" placeholder="0.00" min="0" max="20" step="0.01" inputmode="decimal">
+        </div>
+      </div>
+
+      <div class="formato-block">
+        <div class="formato-header">CO-10: EXPOSICIÓN APTITUDES (1-5)</div>
+        <div class="table-mobile-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="text-align: left;">Aspecto Significativo</th>
+                <th>J-A</th>
+                <th>J-B</th>
+                <th>J-C</th>
+              </tr>
+            </thead>
+            <tbody>
+              <script>
+                const aspectosReales = [
+                  "Apariencia física y presentación profesional",
+                  "Conocimiento y dominio del tema",
+                  "Estructura y presentación del tema",
+                  "Ritmo y claridad de la exposición",
+                  "Vocabulario y expresión lingüística utilizada",
+                  "Ejemplificación y pertinencia de ejemplos",
+                  "Dicción y pronunciación",
+                  "Volumen y modulación de la voz",
+                  "Dominio del grupo y capacidad de comunicación",
+                  "Equilibrio emocional y control del proceso",
+                  "Gesticulación y expresión corporal",
+                  "Uso y combinación de recursos de apoyo"
+                ];
+
+                aspectosReales.forEach((aspecto, index) => {
+                  const i = index + 1; 
+                  document.write(`
+                    <tr>
+                      <td style="text-align: left; font-size: 0.8rem; padding-left: 8px;">${aspecto}</td>
+                      <td><input type="number" id="ja_in${i}" class="matrix-input" min="1" max="5" placeholder="0" inputmode="numeric"></td>
+                      <td><input type="number" id="jb_in${i}" class="matrix-input" min="1" max="5" placeholder="0" inputmode="numeric"></td>
+                      <td><input type="number" id="jc_in${i}" class="matrix-input" min="1" max="5" placeholder="0" inputmode="numeric"></td>
+                    </tr>
+                  `);
+                });
+              </script>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <button id="evaluacion_btGuardar" class="btn-submit">Guardar Calificaciones</button>
+    </div>
+    
+    <input type="hidden" id="evaluacion_btVolver">
+  </main>
+
+  <script type="module">
+    import Cl_vEvaluacionJurado from "./dist/views/Cl_vEvaluacionJurado.js";
+    import Cl_cEvaluacionJurado from "./dist/controllers/Cl_cEvaluacionJurado.js";
+    new Cl_cEvaluacionJurado({ vista: new Cl_vEvaluacionJurado(), volverCallback: () => {} });
+  </script>
+</body>
+</html>

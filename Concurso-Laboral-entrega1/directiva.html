@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Directiva - Tablero</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+    body { background-color: #ffffff; padding-top: 60px; padding-bottom: 20px; color: #000000; }
+    
+    .app-bar { position: fixed; top: 0; left: 0; right: 0; height: 56px; background-color: #000000; color: #ffffff; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; z-index: 1000; }
+    .app-bar h1 { font-size: 1.1rem; font-weight: bold; }
+    
+    .btn-sync { padding: 6px 12px; background-color: #ffffff; color: #000000; border: 1px solid #ffffff; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+    .btn-sync:active { background-color: #cccccc; color: #000000; }
+    
+    .container { width: 100%; max-width: 480px; margin: 0 auto; padding: 16px; }
+    .section-title { font-size: 0.9rem; color: #000000; margin: 20px 0 10px 0; border-bottom: 2px solid #000000; padding-bottom: 4px; text-transform: uppercase; font-weight: bold; }
+    
+    .table-scrollable { width: 100%; overflow-x: auto; background: #ffffff; border: 1px solid #000000; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; min-width: 600px; font-size: 0.85rem; }
+    th, td { padding: 12px 10px; border-bottom: 1px solid #000000; border-right: 1px solid #000000; text-align: center; color: #000000; }
+    th { background-color: #ffffff; font-weight: bold; font-size: 0.75rem; }
+    
+    .glosario { background: #ffffff; border: 1px solid #000000; padding: 12px; font-size: 0.8rem; color: #000000; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <header class="app-bar">
+    <h1>CO-11: Veredicto Global</h1>
+    <button id="tablero_btRecargar" class="btn-sync">Sincronizar</button>
+  </header>
+  <main class="container" id="tableroDirectiva">
+    <div class="section-title">Adjudicación del Cargo</div>
+    <div id="tablero_cardGanador"></div>
+    
+    <div class="section-title">Cuadro de Ponderaciones</div>
+    <div class="table-scrollable">
+      <table>
+        <thead>
+          <tr>
+            <th>Cédula</th>
+            <th>Nombre Postulante</th>
+            <th>Cred (10%)</th>
+            <th>Conoc (60%)</th>
+            <th>Apt (30%)</th>
+            <th>Definitiva (100)</th>
+            <th>Resultado Final</th>
+          </tr>
+        </thead>
+        <tbody id="tablero_tblRegistros"></tbody>
+      </table>
+    </div>
+    
+    <div class="glosario">
+      <strong>Memorando Institucional - Políticas de Ingreso:</strong>
+      <p>• Aprobado (Mayor calificación): Seleccionado para el cargo.</p>
+      <p>• Aprobado: Superó los cortes mínimos.</p>
+      <p>• Improbado por Nota Mínima: Nota global inferior a 16 pts.</p>
+      <p>• Improbado en Conocimiento: Menos de 15 pts en la prueba técnica.</p>
+    </div>
+    <input type="hidden" id="tablero_btVolver">
+  </main>
+  <script type="module">
+    import Cl_vTableroDirectiva from "./dist/views/Cl_vTableroDirectiva.js";
+    import Cl_cTableroDirectiva from "./dist/controllers/Cl_cTableroDirectiva.js";
+    import Cl_mConcurso from "./dist/models/Cl_mConcurso.js";
+    new Cl_cTableroDirectiva({ modelo: new Cl_mConcurso(), vista: new Cl_vTableroDirectiva(), volverCallback: () => {} });
+  </script>
+</body>
+</html>
